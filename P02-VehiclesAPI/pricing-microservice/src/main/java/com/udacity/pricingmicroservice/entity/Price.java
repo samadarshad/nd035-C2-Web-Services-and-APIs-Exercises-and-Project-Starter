@@ -10,13 +10,13 @@ public class Price {
 
     private String price;
     private String currency;
-    private Long vehicleid;
+    private Long vehicle_id;
 
-    public Price(Long id, String price, String currency, Long vehicleid) {
+    public Price(Long id, String price, String currency, Long vehicle_id) {
         this.id = id;
         this.price = price;
         this.currency = currency;
-        this.vehicleid = vehicleid;
+        this.vehicle_id = vehicle_id;
     }
 
     public Price() {
@@ -47,11 +47,11 @@ public class Price {
         this.currency = currency;
     }
 
-    public Long getVehicleid() {
-        return vehicleid;
+    public Long getVehicle_id() {
+        return vehicle_id;
     }
 
-    public void setVehicleid(Long vehicleId) {
-        this.vehicleid = vehicleId;
+    public void setVehicle_id(Long vehicleId) {
+        this.vehicle_id = vehicleId;
     }
 }
