@@ -5,9 +5,12 @@ import com.udacity.vehicles.client.prices.PriceClient;
 import com.udacity.vehicles.domain.car.Car;
 import com.udacity.vehicles.domain.car.CarRepository;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
+import com.udacity.vehicles.domain.manufacturer.ManufacturerRepository;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityNotFoundException;
 
 /**
  * Implements the car service create, read, update or delete
@@ -20,6 +23,7 @@ public class CarService {
     private final CarRepository repository;
     private final MapsClient mapsClient;
     private final PriceClient priceClient;
+
 
     public CarService(CarRepository repository, MapsClient mapsClient, PriceClient priceClient) {
         /**
@@ -50,7 +54,14 @@ public class CarService {
          *   If it does not exist, throw a CarNotFoundException
          *   Remove the below code as part of your implementation.
          */
-        Car car = new Car();
+        Optional<Car> optionalCar = repository.findById(id);
+        Car car;
+        if (optionalCar.isPresent()) {
+            car = optionalCar.get();
+        } else {
+            throw new CarNotFoundException();
+        }
+
 
         /**
          * TODO: Use the Pricing Web client you create in `VehiclesApiApplication`
