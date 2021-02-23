@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -95,15 +97,6 @@ public class CarControllerTest {
                         .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isCreated());
     }
-
-    public static <T>  Object convertJSONStringToObject(String json, Class<T> objectClass) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-        JavaTimeModule module = new JavaTimeModule();
-        mapper.registerModule(module);
-        return mapper.readValue(json, objectClass);
-    }
     /**
      * Tests if the read operation appropriately returns a list of vehicles.
      * @throws Exception if the read operation of the vehicle list fails
@@ -119,6 +112,7 @@ public class CarControllerTest {
                 .andExpect(jsonPath("$._embedded.carList[0].condition", is("USED")))
                 .andExpect(jsonPath("$._embedded.carList[0].details.model", is("Impala")))
                 .andExpect(jsonPath("$._embedded.carList[0].location.lat", is(40.730610)));
+        verify(this.carService, times(1)).list();
     }
 
     /**
@@ -127,10 +121,16 @@ public class CarControllerTest {
      */
     @Test
     public void findCar() throws Exception {
-        /**
-         * TODO: Add a test to check that the `get` method works by calling
-         *   a vehicle by ID. This should utilize the car from `getCar()` below.
-         */
+        mvc.perform(
+                get(new URI("/cars/1"))
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.condition", is("USED")))
+                .andExpect(jsonPath("$.details.model", is("Impala")))
+                .andExpect(jsonPath("$.location.lat", is(40.730610)));
+        verify(this.carService, times(1)).findById(1L);
     }
 
     /**
@@ -144,6 +144,12 @@ public class CarControllerTest {
          *   when the `delete` method is called from the Car Controller. This
          *   should utilize the car from `getCar()` below.
          */
+        mvc.perform(
+                delete(new URI("/cars/1"))
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isNoContent())
+                .andDo(print());
+        verify(this.carService, times(1)).delete(1L);
     }
 
     /**
