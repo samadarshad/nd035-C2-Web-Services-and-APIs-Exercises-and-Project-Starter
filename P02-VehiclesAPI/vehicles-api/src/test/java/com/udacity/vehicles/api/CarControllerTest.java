@@ -1,8 +1,10 @@
 package com.udacity.vehicles.api;
 
+import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static com.udacity.vehicles.domain.Condition.USED;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -36,6 +38,8 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -71,6 +75,9 @@ public class CarControllerTest {
     @MockBean
     private MapsClient mapsClient;
 
+    @Captor
+    ArgumentCaptor<Car> carArgumentCaptor;
+
     /**
      * Creates pre-requisites for testing, such as an example car.
      */
@@ -96,7 +103,11 @@ public class CarControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isCreated());
-        verify(carService, times(1)).save(any());
+
+
+        verify(carService, times(1)).save(carArgumentCaptor.capture());
+        Car carCaptorValue = carArgumentCaptor.getValue();
+        assertThat(car, sameBeanAs(carCaptorValue));
     }
     /**
      * Tests if the read operation appropriately returns a list of vehicles.
