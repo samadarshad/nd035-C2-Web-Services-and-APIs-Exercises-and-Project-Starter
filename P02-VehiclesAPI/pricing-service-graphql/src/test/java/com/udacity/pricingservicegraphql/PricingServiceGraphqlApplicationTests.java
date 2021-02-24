@@ -4,10 +4,7 @@ package com.udacity.pricingservicegraphql;
 import com.jayway.jsonpath.JsonPath;
 import com.udacity.pricingservicegraphql.entity.Price;
 import com.udacity.pricingservicegraphql.repository.PriceRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -30,28 +27,34 @@ class PricingServiceGraphqlApplicationTests {
     private static final RestTemplate restTemplate = new RestTemplate();
     private String url;
 
-    @BeforeAll
-    static void beforeAll(@Autowired PriceRepository priceRepository) {
+    @BeforeEach
+    void beforeEach(@Autowired PriceRepository priceRepository) {
+        url = "http://localhost:" + port + "/graphql";
+
         priceRepository.save(new Price(null, new BigDecimal(1500d), "USD", 1L));
         priceRepository.save(new Price(null, new BigDecimal(2000d), "USD", 2L));
         priceRepository.save(new Price(null, new BigDecimal(1000d), "USD", 3L));
         priceRepository.save(new Price(null, new BigDecimal(700d), "GBP", 3L));
     }
 
-    @BeforeEach
-    void beforeEach() {
-        url = "http://localhost:" + port + "/graphql";
+    @AfterEach
+    void afterEach(@Autowired PriceRepository priceRepository) {
+        priceRepository.deleteAll();
     }
 
     @Test
     void listPrices() {
-        String expectedResponse = "{\"data\":{\"findAllPrices\":[{\"id\":\"1\",\"price\":1500.0,\"currency\":\"USD\",\"vehicle_id\":1},{\"id\":\"2\",\"price\":2000.0,\"currency\":\"USD\",\"vehicle_id\":2},{\"id\":\"3\",\"price\":1000.0,\"currency\":\"USD\",\"vehicle_id\":3},{\"id\":\"4\",\"price\":700.0,\"currency\":\"GBP\",\"vehicle_id\":3}]}}";
+//        String expectedResponse = "{\"data\":{\"findAllPrices\":[{\"id\":\"1\",\"price\":1500.0,\"currency\":\"USD\",\"vehicle_id\":1},{\"id\":\"2\",\"price\":2000.0,\"currency\":\"USD\",\"vehicle_id\":2},{\"id\":\"3\",\"price\":1000.0,\"currency\":\"USD\",\"vehicle_id\":3},{\"id\":\"4\",\"price\":700.0,\"currency\":\"GBP\",\"vehicle_id\":3}]}}";
         String request = "{\n" +
                 "    \"query\":\"{findAllPrices { id price currency vehicle_id} }\"\n" +
                 "}";
 
         String result = restTemplate.postForObject(url, request, String.class);
-        assertEquals(result, expectedResponse);
+//        assertEquals(result, expectedResponse);
+        assertEquals((double) JsonPath.read(result, "$.data.findAllPrices[0].price"), 1500.0);
+        assertEquals((double) JsonPath.read(result, "$.data.findAllPrices[1].price"), 2000.0);
+        assertEquals((double) JsonPath.read(result, "$.data.findAllPrices[2].price"), 1000.0);
+        assertEquals((double) JsonPath.read(result, "$.data.findAllPrices[3].price"), 700.0);
     }
 
     @Test
@@ -77,12 +80,59 @@ class PricingServiceGraphqlApplicationTests {
         assertEquals(JsonPath.read(result, "$.data.generateAndAssignPrice.currency"), "GBP");
     }
 
+    @Test
+    void newPrice() {
+        String request = "{\n" +
+                "    \"query\":\"mutation{newPrice(price: 5555, currency: \\\"GBP\\\", vehicle_id: 3) { id price currency vehicle_id} }\"\n" +
+                "}";
+
+        String result = restTemplate.postForObject(url, request, String.class);
+        assertEquals(JsonPath.read(result, "$.data.newPrice.price"), 5555.0);
+        assertEquals(JsonPath.read(result, "$.data.newPrice.vehicle_id"), (Integer) 3);
+        assertEquals(JsonPath.read(result, "$.data.newPrice.currency"), "GBP");
+    }
+
+    @Test
+    void updatePrice() {
+        Integer existingId = queryExistingId();
+
+        String request = "{\n" +
+                "    \"query\":\"mutation{updatePrice(id:" + existingId + ", price: 6666) { id price currency vehicle_id} }\"\n" +
+                "}";
+
+        String result = restTemplate.postForObject(url, request, String.class);
+        assertEquals(JsonPath.read(result, "$.data.updatePrice.price"), 6666.0);
+    }
+
+    Integer queryExistingId() {
+        String request = "{\n" +
+                "    \"query\":\"{findAllPrices { id } }\"\n" +
+                "}";
+        String result = restTemplate.postForObject(url, request, String.class);
+        Integer existingId = Integer.parseInt(JsonPath.read(result, "$.data.findAllPrices[0].id"));
+        return existingId;
+    }
+
+    @Test
+    void deletePrice() {
+        Integer existingId = queryExistingId();
+
+        String request = "{\n" +
+                "    \"query\":\"mutation{deletePrice(id: 1) }\"\n" +
+                "}";
+
+        String result = restTemplate.postForObject(url, request, String.class);
+        assertEquals(JsonPath.read(result, "$.data.deletePrice"), true);
+    }
+
+    @Test
+    void deleteAllByVehicleId() {
+        String request = "{\n" +
+                "    \"query\":\"mutation{deleteAllByVehicleId(vehicle_id: 3) }\"\n" +
+                "}";
+
+        String result = restTemplate.postForObject(url, request, String.class);
+        assertEquals(JsonPath.read(result, "$.data.deleteAllByVehicleId"), true);
+    }
+
 }
-
-
-
-//    generateAndAssignPrice(currency: String!, vehicle_id: Int!): Price!
-//        newPrice(price: Float!, currency: String!, vehicle_id: Int!) : Price!
-//        updatePrice(id: Int!, price: Float, currency: Int, vehicle_id: Int): Price!
-//        deletePrice(id: Int!): Boolean!
-//        deleteAllByVehicleId(vehicle_id: Int!): Boolean!
