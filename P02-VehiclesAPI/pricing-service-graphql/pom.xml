@@ -49,17 +49,17 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.graphql-java-kickstart</groupId>-->
-<!--            <artifactId>graphql-spring-boot-starter</artifactId>-->
-<!--            <version>11.0.0</version>-->
-<!--        </dependency>-->
         <dependency>
-            <groupId>com.graphql-java</groupId>
-            <artifactId>graphql-spring-boot-starter-test</artifactId>
-            <version>5.0.2</version>
-            <scope>test</scope>
+            <groupId>com.graphql-java-kickstart</groupId>
+            <artifactId>graphql-spring-boot-starter</artifactId>
+            <version>11.0.0</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.graphql-java</groupId>-->
+<!--            <artifactId>graphql-spring-boot-starter-test</artifactId>-->
+<!--            <version>5.0.2</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.graphql-java-kickstart</groupId>
             <artifactId>graphiql-spring-boot-starter</artifactId>
