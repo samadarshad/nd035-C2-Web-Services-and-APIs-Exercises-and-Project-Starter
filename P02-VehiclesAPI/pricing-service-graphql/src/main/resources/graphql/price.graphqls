@@ -1,0 +1,15 @@
+type Price {
+    id: ID!
+    price: Int!
+    currency: String!
+    vehicle_id: Int!
+}
+
+type Query {
+    findAllPrices: [Price]!
+    findPricesByVehicleId(vehicle_id: Int!): [Price]!
+}
+
+type Mutation {
+    newPrice(price: Int!, currency: String!, vehicle_id: Int!) : Price!
+}
