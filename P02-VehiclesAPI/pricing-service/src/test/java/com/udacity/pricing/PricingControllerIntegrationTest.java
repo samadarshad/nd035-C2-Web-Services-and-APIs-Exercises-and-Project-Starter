@@ -11,6 +11,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -28,6 +29,13 @@ public class PricingControllerIntegrationTest {
         Price price = restTemplate.getForObject("http://localhost:" + port + "/services/price?vehicleId=1", Price.class);
 
         assertNotNull(price.getPrice());
+    }
+
+    @Test
+    public void getNullPrice() {
+        Price price = restTemplate.getForObject("http://localhost:" + port + "/services/price?vehicleId=21", Price.class);
+
+        assertNull(price.getPrice());
     }
 
 }
