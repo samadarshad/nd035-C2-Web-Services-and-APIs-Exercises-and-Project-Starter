@@ -1,10 +1,12 @@
 package com.udacity.pricingservicegraphql;
 
 
+import com.jayway.jsonpath.JsonPath;
 import com.udacity.pricingservicegraphql.entity.Price;
 import com.udacity.pricingservicegraphql.repository.PriceRepository;
 import org.json.JSONObject;
 import org.junit.Before;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,6 +29,7 @@ import java.time.chrono.JapaneseEra;
 import static graphql.Assert.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.hamcrest.Matchers.*;
@@ -112,7 +115,7 @@ class PricingServiceGraphqlApplicationTests {
         String url = "http://localhost:" + port + "/graphql";
         String result = restTemplate.postForObject(url, request, String.class);
 
-        assert(jsonPath(result, "$.data.findAllPrices[0].price", is(1500.0)));
+        Assertions.assertEquals((double) JsonPath.read(result, "$.data.findAllPrices[0].price"), (double) 1500.0);
 
 
 
