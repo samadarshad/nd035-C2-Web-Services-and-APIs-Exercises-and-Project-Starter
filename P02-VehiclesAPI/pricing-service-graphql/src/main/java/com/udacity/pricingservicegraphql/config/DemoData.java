@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DemoData {
     @Bean
-    CommandLineRunner initCarDatabase(PriceRepository priceRepository) {
+    CommandLineRunner initPriceDatabase(PriceRepository priceRepository) {
         return args -> {
             priceRepository.save(new Price(1L, 1500L, "USD", 1L));
             priceRepository.save(new Price(2L, 2000L, "USD", 2L));

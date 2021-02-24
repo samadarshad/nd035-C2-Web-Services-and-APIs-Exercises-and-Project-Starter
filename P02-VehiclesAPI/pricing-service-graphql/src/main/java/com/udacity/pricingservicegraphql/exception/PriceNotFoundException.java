@@ -13,9 +13,9 @@ public class PriceNotFoundException extends RuntimeException implements GraphQLE
 
     private Map<String, Object> extensions = new HashMap<>();
 
-    public PriceNotFoundException(String message, Long invalidPriceId) {
+    public PriceNotFoundException(String message, Long invalidId) {
         super(message);
-        extensions.put("invalidPriceId", invalidPriceId);
+        extensions.put("invalidId", invalidId);
     }
     @Override
     public List<SourceLocation> getLocations() {
