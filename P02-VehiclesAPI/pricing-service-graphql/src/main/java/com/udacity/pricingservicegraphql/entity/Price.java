@@ -22,4 +22,36 @@ public class Price {
     public Price() {
 
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getPrice() {
+        return price;
+    }
+
+    public void setPrice(Long price) {
+        this.price = price;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public Long getVehicle_id() {
+        return vehicle_id;
+    }
+
+    public void setVehicle_id(Long vehicle_id) {
+        this.vehicle_id = vehicle_id;
+    }
 }

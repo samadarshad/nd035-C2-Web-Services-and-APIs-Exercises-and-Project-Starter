@@ -12,4 +12,7 @@ type Query {
 
 type Mutation {
     newPrice(price: Int!, currency: String!, vehicle_id: Int!) : Price!
+    updatePrice(id: Int!, price: Int, currency: Int, vehicle_id: Int): Price!
+    deletePrice(id: Int!): Boolean!
+    deleteAllByVehicleId(vehicle_id: Int!): Boolean!
 }
