@@ -8,8 +8,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -26,16 +30,22 @@ public class PricingControllerIntegrationTest {
 
     @Test
     public void getPrice() {
-        Price price = restTemplate.getForObject("http://localhost:" + port + "/services/price?vehicleId=1", Price.class);
+        ResponseEntity<Price> response = restTemplate.getForEntity("http://localhost:" + port + "/services/price?vehicleId=1", Price.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.OK));
 
+        Price price = response.getBody();
         assertNotNull(price.getPrice());
     }
 
     @Test
-    public void getNullPrice() {
-        Price price = restTemplate.getForObject("http://localhost:" + port + "/services/price?vehicleId=21", Price.class);
+    public void getPriceNotFound() {
+        ResponseEntity<Price> response = restTemplate.getForEntity("http://localhost:" + port + "/services/price?vehicleId=21", Price.class);
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
 
+        Price price = response.getBody();
         assertNull(price.getPrice());
     }
+
+
 
 }
