@@ -1,0 +1,8 @@
+query {
+    findAllPrices {
+        id
+        price
+        currency
+        vehicle_id
+    }
+}
