@@ -1,6 +1,6 @@
 type Price {
     id: ID!
-    price: Int!
+    price: Float!
     currency: String!
     vehicle_id: Int!
 }
@@ -11,8 +11,9 @@ type Query {
 }
 
 type Mutation {
-    newPrice(price: Int!, currency: String!, vehicle_id: Int!) : Price!
-    updatePrice(id: Int!, price: Int, currency: Int, vehicle_id: Int): Price!
+    generateAndAssignPrice(currency: String!, vehicle_id: Int!): Price!
+    newPrice(price: Float!, currency: String!, vehicle_id: Int!) : Price!
+    updatePrice(id: Int!, price: Float, currency: Int, vehicle_id: Int): Price!
     deletePrice(id: Int!): Boolean!
     deleteAllByVehicleId(vehicle_id: Int!): Boolean!
 }

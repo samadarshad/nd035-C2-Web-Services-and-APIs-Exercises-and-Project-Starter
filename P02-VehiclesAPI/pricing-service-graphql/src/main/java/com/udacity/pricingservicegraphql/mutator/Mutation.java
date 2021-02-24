@@ -3,23 +3,34 @@ package com.udacity.pricingservicegraphql.mutator;
 import com.udacity.pricingservicegraphql.entity.Price;
 import com.udacity.pricingservicegraphql.exception.PriceNotFoundException;
 import com.udacity.pricingservicegraphql.repository.PriceRepository;
+import com.udacity.pricingservicegraphql.service.PriceService;
 import graphql.kickstart.tools.GraphQLMutationResolver;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.Null;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 @Component
 public class Mutation implements GraphQLMutationResolver {
     private PriceRepository priceRepository;
+    private PriceService priceService;
 
-    public Mutation(PriceRepository priceRepository) {
+    public Mutation(PriceRepository priceRepository,
+                    PriceService priceService) {
         this.priceRepository = priceRepository;
+        this.priceService = priceService;
     }
 
-    public Price newPrice(Long price, String currency, Long vehicle_id) {
+    public Price generateAndAssignPrice(String currency, Long vehicle_id) {
+        Price newPrice = priceService.generatePrice(currency, vehicle_id);
+        priceRepository.save(newPrice);
+        return newPrice;
+    }
+
+    public Price newPrice(BigDecimal price, String currency, Long vehicle_id) {
         Price newPrice = new Price(null, price, currency, vehicle_id);
         priceRepository.save(newPrice);
         return newPrice;
@@ -48,7 +59,7 @@ public class Mutation implements GraphQLMutationResolver {
         }
     }
 
-    public Price updatePrice(Long id, @Nullable Long price, @Nullable String currency, @Nullable Long vehicle_id) {
+    public Price updatePrice(Long id, @Nullable BigDecimal price, @Nullable String currency, @Nullable Long vehicle_id) {
         Optional<Price> optionalPrice = priceRepository.findById(id);
         if (optionalPrice.isPresent()) {
             Price newPrice = optionalPrice.get();
