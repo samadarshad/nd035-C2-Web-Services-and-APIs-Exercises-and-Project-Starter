@@ -42,7 +42,19 @@ class PricingServiceGraphqlApplicationTests {
         String url = "http://localhost:" + port + "/graphql";
         String result = restTemplate.postForObject(url, request, String.class);
         assertEquals(result, expectedResponse);
-        Assertions.assertEquals((double) JsonPath.read(result, "$.data.findAllPrices[0].price"), 1500.0);
+    }
+
+    @Test
+    void listPricesForVehicle() {
+        String request = "{\n" +
+                "    \"query\":\"{findPricesByVehicleId(vehicle_id: 3) { id price currency vehicle_id} }\"\n" +
+                "}";
+
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "http://localhost:" + port + "/graphql";
+        String result = restTemplate.postForObject(url, request, String.class);
+        Assertions.assertEquals((double) JsonPath.read(result, "$.data.findPricesByVehicleId[0].price"), 1000.0);
+        Assertions.assertEquals((double) JsonPath.read(result, "$.data.findPricesByVehicleId[1].price"), 700.0);
     }
 
 }
