@@ -15,20 +15,26 @@ view of vehicle details including price and address.
 
 ## Instructions
 
-#### Getting Started
+#### Run the Code
 
 To properly run this application you need to start 
 1) eureka-server 
 2) boogle-maps 
-3) pricing-service-graphql (you must first do `mvn compile` to generate code)
-4) vehicles-api (you must first do `mvn compile` to generate code)
+3) price-service
+4) vehicle-api
 
 in order.
-Then visit http://localhost:8080/swagger-ui/index.html and do GET for vehicle id = 1. Notice the price and location data are populated.
 
-#### Running tests
-You can run tests that don't require all 4 services to be up. There are tests in the pricing-service-graphql (you need to generate code using `mvn compile`) and vehicle-api project.
-You can also visit http://localhost:8762/graphiql for querying the pricing-service-graphql service.
+
+```
+$ mvn clean package
+```
+
+```
+$ java -jar target/vehicles-api-0.0.1-SNAPSHOT.jar
+```
+
+Import it in your favorite IDE as a Maven Project.
 
 ## Operations
 
