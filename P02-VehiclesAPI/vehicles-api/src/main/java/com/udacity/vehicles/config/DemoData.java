@@ -3,7 +3,6 @@ package com.udacity.vehicles.config;
 import com.udacity.vehicles.domain.Condition;
 import com.udacity.vehicles.domain.Location;
 import com.udacity.vehicles.domain.car.Car;
-import com.udacity.vehicles.domain.car.CarRepository;
 import com.udacity.vehicles.domain.car.Details;
 import com.udacity.vehicles.domain.manufacturer.Manufacturer;
 import com.udacity.vehicles.domain.manufacturer.ManufacturerRepository;

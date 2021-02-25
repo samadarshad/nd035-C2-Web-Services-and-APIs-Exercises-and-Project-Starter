@@ -1,6 +1,6 @@
 package com.udacity.vehicles.client.prices;
 
-import com.udacity.vehicles.client.graphqlclient.GraphqlClientMvc;
+import com.udacity.vehicles.util.graphqlclient.GraphqlClientMvc;
 import com.udacity.vehicles.client.prices.graphql.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

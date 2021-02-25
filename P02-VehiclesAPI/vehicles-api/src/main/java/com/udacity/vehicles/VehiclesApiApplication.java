@@ -1,15 +1,11 @@
 package com.udacity.vehicles;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.udacity.vehicles.client.graphqlclient.GraphqlClientMvc;
+import com.udacity.vehicles.util.graphqlclient.GraphqlClientMvc;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;

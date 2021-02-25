@@ -1,9 +1,5 @@
 package com.udacity.vehicles.api;
 
-
-//import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-//import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
 import com.udacity.vehicles.domain.car.Car;
 import com.udacity.vehicles.service.CarService;
 import java.net.URI;
@@ -12,8 +8,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 
-//import org.springframework.hateoas.Resource;
-//import org.springframework.hateoas.Resources;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.MediaType;

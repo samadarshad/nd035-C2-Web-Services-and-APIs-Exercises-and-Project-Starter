@@ -1,4 +1,4 @@
-package com.udacity.vehicles.client.graphqlclient;
+package com.udacity.vehicles.util.graphqlclient;
 
 import com.apollographql.apollo.api.Operation;
 import com.apollographql.apollo.api.ScalarTypeAdapters;

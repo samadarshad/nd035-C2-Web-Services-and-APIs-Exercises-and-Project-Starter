@@ -1,22 +1,15 @@
 package com.udacity.vehicles.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.udacity.vehicles.client.graphqlclient.GraphqlClientMvc;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import com.udacity.vehicles.util.graphqlclient.GraphqlClientMvc;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.client.loadbalancer.reactive.ReactorLoadBalancerExchangeFilterFunction;
-import org.springframework.context.annotation.Bean;
 import org.springframework.web.reactive.function.client.WebClient;
 
 
 public class Utils {
-
-//    @Autowired
-//    private static LoadBalancerClient loadBalancerClient;
 
     public static GraphqlClientMvc createGraphqlClientMvc(String endpoint, String serviceAlias, LoadBalancerClient loadBalancerClient) {
         ServiceInstance serviceInstance=loadBalancerClient.choose(serviceAlias);
