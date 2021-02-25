@@ -1,15 +1,18 @@
 package com.udacity.vehicles;
 
-import com.udacity.vehicles.domain.manufacturer.Manufacturer;
-import com.udacity.vehicles.domain.manufacturer.ManufacturerRepository;
+import com.udacity.vehicles.util.graphqlclient.GraphqlClientMvc;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import static com.udacity.vehicles.util.Utils.createGraphqlClientMvc;
 
 /**
  * Launches a Spring Boot application for the Vehicles API,
@@ -18,26 +21,11 @@ import org.springframework.web.reactive.function.client.WebClient;
  */
 @SpringBootApplication
 @EnableJpaAuditing
+@EnableEurekaClient
 public class VehiclesApiApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(VehiclesApiApplication.class, args);
-    }
-
-    /**
-     * Initializes the car manufacturers available to the Vehicle API.
-     * @param repository where the manufacturer information persists.
-     * @return the car manufacturers to add to the related repository
-     */
-    @Bean
-    CommandLineRunner initDatabase(ManufacturerRepository repository) {
-        return args -> {
-            repository.save(new Manufacturer(100, "Audi"));
-            repository.save(new Manufacturer(101, "Chevrolet"));
-            repository.save(new Manufacturer(102, "Ford"));
-            repository.save(new Manufacturer(103, "BMW"));
-            repository.save(new Manufacturer(104, "Dodge"));
-        };
     }
 
     @Bean
@@ -60,9 +48,9 @@ public class VehiclesApiApplication {
      * @param endpoint where to communicate for the pricing API
      * @return created pricing endpoint
      */
-    @Bean(name="pricing")
-    public WebClient webClientPricing(@Value("${pricing.endpoint}") String endpoint) {
-        return WebClient.create(endpoint);
+    @Bean(name="pricinggraphql")
+    public GraphqlClientMvc graphqlClientMvc(@Value("${pricing.endpoint}") String endpoint, @Value("${pricing.alias}") String serviceAlias, @Autowired LoadBalancerClient loadBalancerClient) {
+        return createGraphqlClientMvc(endpoint, serviceAlias, loadBalancerClient);
     }
 
 }

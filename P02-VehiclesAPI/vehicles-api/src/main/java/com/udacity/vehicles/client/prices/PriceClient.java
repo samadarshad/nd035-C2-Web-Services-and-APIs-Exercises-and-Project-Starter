@@ -1,9 +1,12 @@
 package com.udacity.vehicles.client.prices;
 
+import com.udacity.vehicles.util.graphqlclient.GraphqlClientMvc;
+import com.udacity.vehicles.client.prices.graphql.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.Optional;
 
 /**
  * Implements a class to interface with the Pricing Client for price data.
@@ -12,11 +15,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class PriceClient {
 
     private static final Logger log = LoggerFactory.getLogger(PriceClient.class);
+    private final GraphqlClientMvc graphqlClientMvc;
 
-    private final WebClient client;
-
-    public PriceClient(WebClient pricing) {
-        this.client = pricing;
+    public PriceClient(GraphqlClientMvc pricingGraphQl) {
+        this.graphqlClientMvc = pricingGraphQl;
     }
 
     // In a real-world application we'll want to add some resilience
@@ -30,22 +32,41 @@ public class PriceClient {
      *   error message that the vehicle ID is invalid, or note that the
      *   service is down.
      */
-    public String getPrice(Long vehicleId) {
+    public String getByVehicleId(Integer vehicleId) {
         try {
-            Price price = client
-                    .get()
-                    .uri(uriBuilder -> uriBuilder
-                            .path("services/price/")
-                            .queryParam("vehicleId", vehicleId)
-                            .build()
-                    )
-                    .retrieve().bodyToMono(Price.class).block();
-
-            return String.format("%s %s", price.getCurrency(), price.getPrice());
+            Optional<FindPricesByVehicleIdQuery.Data> rsp = graphqlClientMvc.exchange(new FindPricesByVehicleIdQuery(Math.toIntExact(vehicleId)));
+            if (rsp.isPresent()) {
+                String currency = rsp.get().getFindPricesByVehicleId().get(0).getCurrency();
+                double price = rsp.get().getFindPricesByVehicleId().get(0).getPrice();
+                return String.format("%s %s", price, currency);
+            }
 
         } catch (Exception e) {
             log.error("Unexpected error retrieving price for vehicle {}", vehicleId, e);
         }
         return "(consult price)";
+    }
+
+    public void create(String currency, Integer vehicleId) {
+        try {
+            Optional<GenerateAndAssignPriceMutation.Data> rsp = graphqlClientMvc.exchange(new GenerateAndAssignPriceMutation(currency, vehicleId));
+            if (rsp.isEmpty()) {
+                throw new Exception("Couldnt assign price");
+            }
+        } catch (Exception e) {
+            log.error("Unexpected error creating price for vehicle {}", vehicleId, e);
+        }
+
+    }
+
+    public void deleteByVehicleId(Integer vehicleId) {
+        try {
+            Optional<DeleteAllByVehicleIdMutation.Data> rsp = graphqlClientMvc.exchange(new DeleteAllByVehicleIdMutation(vehicleId));
+            if (rsp.isEmpty()) {
+                throw new Exception("Couldnt delete price");
+            }
+        } catch (Exception e) {
+            log.error("Unexpected error deleting price for vehicle {}", vehicleId, e);
+        }
     }
 }

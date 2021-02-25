@@ -15,31 +15,24 @@ view of vehicle details including price and address.
 
 ## Instructions
 
-#### TODOs
+#### Getting Started
 
-- Implement the `TODOs` within the `CarService.java` and `CarController.java`  files
-- Add additional tests to the `CarControllerTest.java` file based on the `TODOs`
-- Implement API documentation using Swagger
+To properly run this application you need to start 
+1) eureka-server 
+2) boogle-maps 
+3) pricing-service-graphql (you must first do `mvn compile` to generate code)
+4) vehicles-api (you must first do `mvn compile` to generate code)
 
-#### Run the Code
+in order.
+Then visit http://localhost:8080/swagger-ui/index.html and do GET for vehicle id = 1. Notice the price and location data are populated.
 
-To properly run this application you need to start the Orders API and
-the Service API first.
-
-
-```
-$ mvn clean package
-```
-
-```
-$ java -jar target/vehicles-api-0.0.1-SNAPSHOT.jar
-```
-
-Import it in your favorite IDE as a Maven Project.
+#### Running tests
+You can run tests that don't require all 4 services to be up. There are tests in the pricing-service-graphql (you need to generate code using `mvn compile`) and vehicle-api project.
+You can also visit http://localhost:8762/graphiql for querying the pricing-service-graphql service.
 
 ## Operations
 
-Swagger UI: http://localhost:8080/swagger-ui.html
+Swagger UI: http://localhost:8080/swagger-ui/index.html
 
 ### Create a Vehicle
 

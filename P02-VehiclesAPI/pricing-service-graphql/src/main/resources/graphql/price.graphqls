@@ -1,0 +1,19 @@
+type Price {
+    id: ID!
+    price: Float!
+    currency: String!
+    vehicle_id: Int!
+}
+
+type Query {
+    findAllPrices: [Price]!
+    findPricesByVehicleId(vehicle_id: Int!): [Price]!
+}
+
+type Mutation {
+    generateAndAssignPrice(currency: String!, vehicle_id: Int!): Price!
+    newPrice(price: Float!, currency: String!, vehicle_id: Int!) : Price!
+    updatePrice(id: Int!, price: Float, currency: Int, vehicle_id: Int): Price!
+    deletePrice(id: Int!): Boolean!
+    deleteAllByVehicleId(vehicle_id: Int!): Boolean!
+}
