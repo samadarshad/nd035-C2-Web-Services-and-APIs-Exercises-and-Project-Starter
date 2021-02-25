@@ -1,5 +1,7 @@
 package com.udacity.vehicles;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.udacity.vehicles.client.graphqlclient.GraphqlClientMvc;
 import com.udacity.vehicles.domain.Condition;
 import com.udacity.vehicles.domain.Location;
 import com.udacity.vehicles.domain.car.Car;
@@ -12,14 +14,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
-import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchangeFilterFunction;
+//import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchangeFilterFunction;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.reactive.function.client.WebClient;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
+//import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * Launches a Spring Boot application for the Vehicles API,
@@ -27,7 +30,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * and launches web clients to communicate with maps and pricing.
  */
 @SpringBootApplication
-@EnableSwagger2
+//@EnableSwagger2
 @EnableJpaAuditing
 @EnableEurekaClient
 public class VehiclesApiApplication {
@@ -60,9 +63,18 @@ public class VehiclesApiApplication {
     public WebClient webClientPricing(@Value("${pricing.endpoint}") String endpoint, LoadBalancerClient lbClient) {
         return WebClient
                 .builder()
-                .filter(new LoadBalancerExchangeFilterFunction(lbClient))
+//                .filter(new LoadBalancerExchangeFilterFunction(lbClient))
                 .baseUrl(endpoint)
                 .build();
+    }
+
+    @Bean(name="pricinggraphql")
+    public GraphqlClientMvc graphqlClientMvc(@Value("${pricing.endpoint}") String endpoint, LoadBalancerClient lbClient) {
+        return new GraphqlClientMvc(
+                new RestTemplateBuilder()
+                        .rootUri(endpoint)
+                        .build(),
+                new ObjectMapper());
     }
 
 }

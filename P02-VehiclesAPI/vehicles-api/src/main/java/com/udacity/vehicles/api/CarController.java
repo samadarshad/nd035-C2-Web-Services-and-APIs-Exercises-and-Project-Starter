@@ -1,8 +1,8 @@
 package com.udacity.vehicles.api;
 
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+//import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+//import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import com.udacity.vehicles.domain.car.Car;
 import com.udacity.vehicles.service.CarService;
@@ -12,8 +12,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
+//import org.springframework.hateoas.Resource;
+//import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +26,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * Implements a REST-based controller for the Vehicles API.
@@ -45,10 +50,10 @@ class CarController {
      * @return list of vehicles
      */
     @GetMapping
-    Resources<Resource<Car>> list() {
-        List<Resource<Car>> resources = carService.list().stream().map(assembler::toResource)
+    CollectionModel<EntityModel<Car>> list() {
+        List<EntityModel<Car>> resources = carService.list().stream().map(assembler::toResource)
                 .collect(Collectors.toList());
-        return new Resources<>(resources,
+        return new CollectionModel<>(resources,
                 linkTo(methodOn(CarController.class).list()).withSelfRel());
     }
 
@@ -58,7 +63,7 @@ class CarController {
      * @return all information for the requested vehicle
      */
     @GetMapping("/{id}")
-    Resource<Car> get(@PathVariable Long id) {
+    EntityModel<Car> get(@PathVariable Long id) {
         return assembler.toResource(carService.findById(id));
     }
 
@@ -70,8 +75,8 @@ class CarController {
      */
     @PostMapping
     ResponseEntity<?> post(@Valid @RequestBody Car car) throws URISyntaxException {
-        Resource<Car> resource = assembler.toResource(carService.save(car));
-        return ResponseEntity.created(new URI(resource.getId().expand().getHref())).body(resource);
+        EntityModel<Car> resource = assembler.toResource(carService.save(car));
+        return ResponseEntity.created(new URI(resource.getRequiredLink("self").getHref())).body(resource);
     }
 
     /**
@@ -83,7 +88,7 @@ class CarController {
     @PutMapping("/{id}")
     ResponseEntity<?> put(@PathVariable Long id, @Valid @RequestBody Car car) {
         car.setId(id);
-        Resource<Car> resource = assembler.toResource(carService.save(car));
+        EntityModel<Car> resource = assembler.toResource(carService.save(car));
         return ResponseEntity.ok(resource);
     }
 
