@@ -7,10 +7,7 @@ import com.udacity.vehicles.domain.car.CarRepository;
 import java.util.List;
 import java.util.Optional;
 
-import com.udacity.vehicles.domain.manufacturer.ManufacturerRepository;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityNotFoundException;
 
 /**
  * Implements the car service create, read, update or delete
@@ -44,7 +41,7 @@ public class CarService {
      * @param id the ID number of the car to gather information on
      * @return the requested car's information, including location and price
      */
-    public Car findById(Long id) {
+    public Car findById(Integer id) {
         Optional<Car> optionalCar = repository.findById(id);
         Car car;
         if (optionalCar.isPresent()) {
@@ -79,7 +76,7 @@ public class CarService {
      * Deletes a given car by ID
      * @param id the ID number of the car to delete
      */
-    public void delete(Long id) {
+    public void delete(Integer id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
         } else {

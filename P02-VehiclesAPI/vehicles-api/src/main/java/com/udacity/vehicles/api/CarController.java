@@ -63,7 +63,7 @@ class CarController {
      * @return all information for the requested vehicle
      */
     @GetMapping("/{id}")
-    EntityModel<Car> get(@PathVariable Long id) {
+    EntityModel<Car> get(@PathVariable Integer id) {
         return assembler.toResource(carService.findById(id));
     }
 
@@ -86,7 +86,7 @@ class CarController {
      * @return response that the vehicle was updated in the system
      */
     @PutMapping("/{id}")
-    ResponseEntity<?> put(@PathVariable Long id, @Valid @RequestBody Car car) {
+    ResponseEntity<?> put(@PathVariable Integer id, @Valid @RequestBody Car car) {
         car.setId(id);
         EntityModel<Car> resource = assembler.toResource(carService.save(car));
         return ResponseEntity.ok(resource);
@@ -98,7 +98,7 @@ class CarController {
      * @return response that the related vehicle is no longer in the system
      */
     @DeleteMapping("/{id}")
-    ResponseEntity<?> delete(@PathVariable Long id) {
+    ResponseEntity<?> delete(@PathVariable Integer id) {
         carService.delete(id);
         return ResponseEntity.noContent().build();
     }

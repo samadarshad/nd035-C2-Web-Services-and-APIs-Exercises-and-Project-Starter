@@ -13,27 +13,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.udacity.vehicles.client.maps.MapsClient;
 import com.udacity.vehicles.client.prices.PriceClient;
-import com.udacity.vehicles.domain.Condition;
 import com.udacity.vehicles.domain.Location;
 import com.udacity.vehicles.domain.car.Car;
 import com.udacity.vehicles.domain.car.Details;
 import com.udacity.vehicles.domain.manufacturer.Manufacturer;
 import com.udacity.vehicles.service.CarService;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -49,7 +41,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
 /**
  * Implements testing of the CarController class.
@@ -84,7 +75,7 @@ public class CarControllerUnitTest {
     @Before
     public void setup() {
         Car car = getCar();
-        car.setId(1L);
+        car.setId(1);
         given(carService.save(any())).willReturn(car);
         given(carService.findById(any())).willReturn(car);
         given(carService.list()).willReturn(Collections.singletonList(car));
@@ -142,7 +133,7 @@ public class CarControllerUnitTest {
                 .andExpect(jsonPath("$.condition", is("USED")))
                 .andExpect(jsonPath("$.details.model", is("Impala")))
                 .andExpect(jsonPath("$.location.lat", is(40.730610)));
-        verify(carService, times(1)).findById(1L);
+        verify(carService, times(1)).findById(1);
     }
 
     /**
@@ -156,7 +147,7 @@ public class CarControllerUnitTest {
                         .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isNoContent())
                 .andDo(print());
-        verify(carService, times(1)).delete(1L);
+        verify(carService, times(1)).delete(1);
     }
 
     /**

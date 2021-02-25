@@ -41,7 +41,7 @@ public class PriceClient {
      *   error message that the vehicle ID is invalid, or note that the
      *   service is down.
      */
-    public String getPrice(Long vehicleId) {
+    public String getPrice(Integer vehicleId) {
         try {
             GraphqlClientMvc client = new GraphqlClientMvc(
             new RestTemplateBuilder()
@@ -49,7 +49,6 @@ public class PriceClient {
                     .build(),
             new ObjectMapper());
 
-            Optional<FindPricesByVehicleIdQuery.Data> rsp1 = client.exchange(new FindPricesByVehicleIdQuery(Math.toIntExact(vehicleId)));
             Optional<FindPricesByVehicleIdQuery.Data> rsp = graphqlClientMvc.exchange(new FindPricesByVehicleIdQuery(Math.toIntExact(vehicleId)));
             if (rsp.isPresent()) {
                 String currency = rsp.get().getFindPricesByVehicleId().get(0).getCurrency();
@@ -63,16 +62,3 @@ public class PriceClient {
         return "(consult price)";
     }
 }
-
-//
-//    GraphqlClientMvc client = new GraphqlClientMvc(
-//            new RestTemplateBuilder()
-//                    .rootUri(url)
-//                    .build(),
-//            new ObjectMapper());
-//
-//    Optional<FindPricesByVehicleIdQuery.Data> rsp = client.exchange(new FindPricesByVehicleIdQuery(3));
-//        Assert.assertTrue(rsp.isPresent());
-//                Assert.assertNotNull(rsp.get().getFindPricesByVehicleId());
-//                assertEquals(rsp.get().getFindPricesByVehicleId().get(0).getPrice(), 1000.0);
-//                assertEquals(rsp.get().getFindPricesByVehicleId().get(1).getPrice(), 700.0);
