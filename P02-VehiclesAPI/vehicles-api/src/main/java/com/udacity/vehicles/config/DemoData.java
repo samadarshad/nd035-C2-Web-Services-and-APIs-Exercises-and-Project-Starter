@@ -34,17 +34,6 @@ public class DemoData {
         car.setCondition(Condition.USED);
         return car;
     }
-//    @Bean
-//    CommandLineRunner initCarDatabase(CarRepository carRepository, ManufacturerRepository manufacturerRepository) {
-//        return args -> {
-//            for (int i = 0; i < 5; i++) {
-//                manufacturerRepository.save(new Manufacturer(100 + i, "Manufac" + String.valueOf(i)));
-//            }
-//            for (int i = 0; i < 10; i++) {
-//                carRepository.save(getCar(i, manufacturerRepository));
-//            }
-//        };
-//    }
 
     @Bean
     CommandLineRunner initCarDatabase(CarService carService, ManufacturerRepository manufacturerRepository) {

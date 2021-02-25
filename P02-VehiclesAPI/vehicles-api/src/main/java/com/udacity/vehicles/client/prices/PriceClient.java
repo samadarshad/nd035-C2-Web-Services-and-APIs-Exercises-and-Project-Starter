@@ -47,17 +47,26 @@ public class PriceClient {
         return "(consult price)";
     }
 
-    public void create(String currency, Integer vehicleId) throws Exception {
-        Optional<GenerateAndAssignPriceMutation.Data> rsp = graphqlClientMvc.exchange(new GenerateAndAssignPriceMutation(currency, vehicleId));
-        if (rsp.isEmpty()) {
-            throw new Exception("Couldnt assign price");
+    public void create(String currency, Integer vehicleId) {
+        try {
+            Optional<GenerateAndAssignPriceMutation.Data> rsp = graphqlClientMvc.exchange(new GenerateAndAssignPriceMutation(currency, vehicleId));
+            if (rsp.isEmpty()) {
+                throw new Exception("Couldnt assign price");
+            }
+        } catch (Exception e) {
+            log.error("Unexpected error creating price for vehicle {}", vehicleId, e);
         }
+
     }
 
-    public void deleteByVehicleId(Integer vehicleId) throws Exception {
-        Optional<DeleteAllByVehicleIdMutation.Data> rsp = graphqlClientMvc.exchange(new DeleteAllByVehicleIdMutation(vehicleId));
-        if (rsp.isEmpty()) {
-            throw new Exception("Couldnt delete price");
+    public void deleteByVehicleId(Integer vehicleId) {
+        try {
+            Optional<DeleteAllByVehicleIdMutation.Data> rsp = graphqlClientMvc.exchange(new DeleteAllByVehicleIdMutation(vehicleId));
+            if (rsp.isEmpty()) {
+                throw new Exception("Couldnt delete price");
+            }
+        } catch (Exception e) {
+            log.error("Unexpected error deleting price for vehicle {}", vehicleId, e);
         }
     }
 }
