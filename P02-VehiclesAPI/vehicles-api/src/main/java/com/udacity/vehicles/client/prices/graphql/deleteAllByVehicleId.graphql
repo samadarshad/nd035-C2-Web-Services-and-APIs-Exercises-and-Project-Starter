@@ -1,0 +1,3 @@
+mutation deleteAllByVehicleId($vehicle_id: Int!) {
+    deleteAllByVehicleId(vehicle_id: $vehicle_id)
+}

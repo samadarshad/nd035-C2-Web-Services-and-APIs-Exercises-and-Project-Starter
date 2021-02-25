@@ -49,7 +49,7 @@ public class CarService {
         } else {
             throw new CarNotFoundException();
         }
-        car.setPrice(priceClient.getPrice(id));
+        car.setPrice(priceClient.getByVehicleId(id));
         car.setLocation(mapsClient.getAddress(car.getLocation()));
         return car;
     }
@@ -69,7 +69,14 @@ public class CarService {
                     }).orElseThrow(CarNotFoundException::new);
         }
 
-        return repository.save(car);
+
+        repository.save(car);
+        try {
+            priceClient.create("USD", car.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return repository.getOne(car.getId());
     }
 
     /**
@@ -79,6 +86,11 @@ public class CarService {
     public void delete(Integer id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
+            try {
+                priceClient.deleteByVehicleId(id);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
             throw new CarNotFoundException();
         }

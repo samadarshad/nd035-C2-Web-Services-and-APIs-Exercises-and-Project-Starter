@@ -7,6 +7,7 @@ import com.udacity.vehicles.domain.car.CarRepository;
 import com.udacity.vehicles.domain.car.Details;
 import com.udacity.vehicles.domain.manufacturer.Manufacturer;
 import com.udacity.vehicles.domain.manufacturer.ManufacturerRepository;
+import com.udacity.vehicles.service.CarService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,14 +34,26 @@ public class DemoData {
         car.setCondition(Condition.USED);
         return car;
     }
+//    @Bean
+//    CommandLineRunner initCarDatabase(CarRepository carRepository, ManufacturerRepository manufacturerRepository) {
+//        return args -> {
+//            for (int i = 0; i < 5; i++) {
+//                manufacturerRepository.save(new Manufacturer(100 + i, "Manufac" + String.valueOf(i)));
+//            }
+//            for (int i = 0; i < 10; i++) {
+//                carRepository.save(getCar(i, manufacturerRepository));
+//            }
+//        };
+//    }
+
     @Bean
-    CommandLineRunner initCarDatabase(CarRepository carRepository, ManufacturerRepository manufacturerRepository) {
+    CommandLineRunner initCarDatabase(CarService carService, ManufacturerRepository manufacturerRepository) {
         return args -> {
             for (int i = 0; i < 5; i++) {
                 manufacturerRepository.save(new Manufacturer(100 + i, "Manufac" + String.valueOf(i)));
             }
             for (int i = 0; i < 10; i++) {
-                carRepository.save(getCar(i, manufacturerRepository));
+                carService.save(getCar(i, manufacturerRepository));
             }
         };
     }

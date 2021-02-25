@@ -1,8 +1,7 @@
 package com.udacity.vehicles.client.prices;
 
 import com.udacity.vehicles.client.graphqlclient.GraphqlClientMvc;
-import com.udacity.vehicles.client.prices.graphql.FindPricesByVehicleIdQuery;
-import com.udacity.vehicles.client.prices.graphql.GenerateAndAssignPriceMutation;
+import com.udacity.vehicles.client.prices.graphql.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -33,7 +32,7 @@ public class PriceClient {
      *   error message that the vehicle ID is invalid, or note that the
      *   service is down.
      */
-    public String getPrice(Integer vehicleId) {
+    public String getByVehicleId(Integer vehicleId) {
         try {
             Optional<FindPricesByVehicleIdQuery.Data> rsp = graphqlClientMvc.exchange(new FindPricesByVehicleIdQuery(Math.toIntExact(vehicleId)));
             if (rsp.isPresent()) {
@@ -48,10 +47,17 @@ public class PriceClient {
         return "(consult price)";
     }
 
-    public void createPrice(String currency, Integer vehicleId) throws Exception {
+    public void create(String currency, Integer vehicleId) throws Exception {
         Optional<GenerateAndAssignPriceMutation.Data> rsp = graphqlClientMvc.exchange(new GenerateAndAssignPriceMutation(currency, vehicleId));
         if (rsp.isEmpty()) {
             throw new Exception("Couldnt assign price");
+        }
+    }
+
+    public void deleteByVehicleId(Integer vehicleId) throws Exception {
+        Optional<DeleteAllByVehicleIdMutation.Data> rsp = graphqlClientMvc.exchange(new DeleteAllByVehicleIdMutation(vehicleId));
+        if (rsp.isEmpty()) {
+            throw new Exception("Couldnt delete price");
         }
     }
 }
