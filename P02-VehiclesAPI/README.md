@@ -13,4 +13,18 @@ should be running at once for full operation. Further instructions are available
 
 ## Dependencies
 
-The project requires the use of Maven and Spring Boot, along with Java v11.
+The project requires the use of Maven and Spring Boot, along with Java v15.
+
+#### Getting Started
+
+To properly run this application you need to start 
+1) eureka-server - visit http://localhost:8761 to confirm it is running
+2) boogle-maps - http://localhost:9191/maps?lat=20.0&lon=20.0 to confirm running 
+3) pricing-service-graphql (you must first do `mvn compile` to generate code) - http://localhost:8762/graphiql
+4) vehicles-api (you must first do `mvn compile` to generate code) - http://localhost:8080/swagger-ui/index.html
+
+in order.
+Then visit http://localhost:8080/swagger-ui/index.html and do GET for vehicle id = 1. Notice the price and location data are populated.
+
+#### Running tests
+You can run tests that are independant to each service. There are tests in the pricing-service-graphql and vehicle-api project. Note you need to generate code using `mvn compile`.
