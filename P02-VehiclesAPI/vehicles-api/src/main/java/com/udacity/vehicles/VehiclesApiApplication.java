@@ -11,12 +11,10 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
-//import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchangeFilterFunction;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.reactive.function.client.WebClient;
-//import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * Launches a Spring Boot application for the Vehicles API,
@@ -24,7 +22,6 @@ import org.springframework.web.reactive.function.client.WebClient;
  * and launches web clients to communicate with maps and pricing.
  */
 @SpringBootApplication
-//@EnableSwagger2
 @EnableJpaAuditing
 @EnableEurekaClient
 public class VehiclesApiApplication {
@@ -53,21 +50,8 @@ public class VehiclesApiApplication {
      * @param endpoint where to communicate for the pricing API
      * @return created pricing endpoint
      */
-//    @Bean(name="pricing")
-//    public WebClient webClientPricing(@Value("${pricing.endpoint}") String endpoint, LoadBalancerClient lbClient) {
-//        return WebClient
-//                .builder()
-//                .filter(new LoadBalancerExchangeFilterFunction(lbClient))
-//                .baseUrl(endpoint)
-//                .build();
-//    }
-
-    @Autowired
-    private RestTemplateBuilder restTemplateBuilder;
-
     @Autowired
     private LoadBalancerClient loadBalancerClient;
-
 
     @Bean(name="pricinggraphql")
     @LoadBalanced
@@ -83,11 +67,6 @@ public class VehiclesApiApplication {
                         .rootUri(baseUrl + endpoint)
                         .build(),
                 new ObjectMapper());
-        //        return new GraphqlClientMvc(
-//                new RestTemplateBuilder()
-//                        .rootUri(endpoint)
-//                        .build(),
-//                new ObjectMapper());
     }
 
 }
