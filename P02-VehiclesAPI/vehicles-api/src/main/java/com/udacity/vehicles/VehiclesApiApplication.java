@@ -2,19 +2,13 @@ package com.udacity.vehicles;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.udacity.vehicles.client.graphqlclient.GraphqlClientMvc;
-import com.udacity.vehicles.domain.Condition;
-import com.udacity.vehicles.domain.Location;
-import com.udacity.vehicles.domain.car.Car;
-import com.udacity.vehicles.domain.car.CarRepository;
-import com.udacity.vehicles.domain.car.Details;
-import com.udacity.vehicles.domain.manufacturer.Manufacturer;
-import com.udacity.vehicles.domain.manufacturer.ManufacturerRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 //import org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerExchangeFilterFunction;
@@ -59,22 +53,41 @@ public class VehiclesApiApplication {
      * @param endpoint where to communicate for the pricing API
      * @return created pricing endpoint
      */
-    @Bean(name="pricing")
-    public WebClient webClientPricing(@Value("${pricing.endpoint}") String endpoint, LoadBalancerClient lbClient) {
-        return WebClient
-                .builder()
+//    @Bean(name="pricing")
+//    public WebClient webClientPricing(@Value("${pricing.endpoint}") String endpoint, LoadBalancerClient lbClient) {
+//        return WebClient
+//                .builder()
 //                .filter(new LoadBalancerExchangeFilterFunction(lbClient))
-                .baseUrl(endpoint)
-                .build();
-    }
+//                .baseUrl(endpoint)
+//                .build();
+//    }
+
+    @Autowired
+    private RestTemplateBuilder restTemplateBuilder;
+
+    @Autowired
+    private LoadBalancerClient loadBalancerClient;
+
 
     @Bean(name="pricinggraphql")
-    public GraphqlClientMvc graphqlClientMvc(@Value("${pricing.endpoint}") String endpoint, LoadBalancerClient lbClient) {
+    @LoadBalanced
+    public GraphqlClientMvc graphqlClientMvc(@Value("${pricing.endpoint}") String endpoint, @Value("${pricing.alias}") String serviceAlias) {
+        ServiceInstance serviceInstance=loadBalancerClient.choose(serviceAlias);
+
+        System.out.println(serviceInstance.getUri());
+
+        String baseUrl=serviceInstance.getUri().toString();
+
         return new GraphqlClientMvc(
                 new RestTemplateBuilder()
-                        .rootUri(endpoint)
+                        .rootUri(baseUrl + endpoint)
                         .build(),
                 new ObjectMapper());
+        //        return new GraphqlClientMvc(
+//                new RestTemplateBuilder()
+//                        .rootUri(endpoint)
+//                        .build(),
+//                new ObjectMapper());
     }
 
 }

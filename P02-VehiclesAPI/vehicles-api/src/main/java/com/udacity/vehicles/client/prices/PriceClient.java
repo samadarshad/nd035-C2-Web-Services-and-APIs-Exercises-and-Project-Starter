@@ -19,14 +19,9 @@ import java.util.Optional;
 public class PriceClient {
 
     private static final Logger log = LoggerFactory.getLogger(PriceClient.class);
-
-    private final WebClient client;
-    private final String endpoint;
     private final GraphqlClientMvc graphqlClientMvc;
 
-    public PriceClient(WebClient pricing, @Value("${pricing.endpoint}") String endpoint, GraphqlClientMvc pricingGraphQl) {
-        this.client = pricing;
-        this.endpoint = endpoint;
+    public PriceClient(GraphqlClientMvc pricingGraphQl) {
         this.graphqlClientMvc = pricingGraphQl;
     }
 
@@ -43,12 +38,6 @@ public class PriceClient {
      */
     public String getPrice(Integer vehicleId) {
         try {
-            GraphqlClientMvc client = new GraphqlClientMvc(
-            new RestTemplateBuilder()
-                    .rootUri(endpoint)
-                    .build(),
-            new ObjectMapper());
-
             Optional<FindPricesByVehicleIdQuery.Data> rsp = graphqlClientMvc.exchange(new FindPricesByVehicleIdQuery(Math.toIntExact(vehicleId)));
             if (rsp.isPresent()) {
                 String currency = rsp.get().getFindPricesByVehicleId().get(0).getCurrency();
