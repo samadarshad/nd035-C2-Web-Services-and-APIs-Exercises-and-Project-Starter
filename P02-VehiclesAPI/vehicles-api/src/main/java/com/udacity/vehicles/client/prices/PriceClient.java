@@ -1,9 +1,13 @@
 package com.udacity.vehicles.client.prices;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.Optional;
 
 /**
  * Implements a class to interface with the Pricing Client for price data.
@@ -49,3 +53,16 @@ public class PriceClient {
         return "(consult price)";
     }
 }
+
+//
+//    GraphqlClientMvc client = new GraphqlClientMvc(
+//            new RestTemplateBuilder()
+//                    .rootUri(url)
+//                    .build(),
+//            new ObjectMapper());
+//
+//    Optional<FindPricesByVehicleIdQuery.Data> rsp = client.exchange(new FindPricesByVehicleIdQuery(3));
+//        Assert.assertTrue(rsp.isPresent());
+//                Assert.assertNotNull(rsp.get().getFindPricesByVehicleId());
+//                assertEquals(rsp.get().getFindPricesByVehicleId().get(0).getPrice(), 1000.0);
+//                assertEquals(rsp.get().getFindPricesByVehicleId().get(1).getPrice(), 700.0);

@@ -1,0 +1,8 @@
+mutation generateAndAssignPrice($currency:String!, $vehicle_id: Int!) {
+    generateAndAssignPrice(currency: $currency, vehicle_id: $vehicle_id) {
+        id
+        price
+        currency
+        vehicle_id
+    }
+}
