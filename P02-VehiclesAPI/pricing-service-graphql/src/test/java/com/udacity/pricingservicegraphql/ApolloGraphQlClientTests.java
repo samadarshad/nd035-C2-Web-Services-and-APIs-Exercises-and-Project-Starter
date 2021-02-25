@@ -3,6 +3,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.udacity.pricingservicegraphql.client.FindAllPricesQuery;
 import com.udacity.pricingservicegraphql.client.FindPricesByVehicleIdQuery;
+import com.udacity.pricingservicegraphql.client.GenerateAndAssignPriceMutation;
 import com.udacity.pricingservicegraphql.entity.Price;
 import com.udacity.pricingservicegraphql.graphqlclient.GraphqlClientMvc;
 import com.udacity.pricingservicegraphql.repository.PriceRepository;
@@ -77,6 +78,22 @@ class ApolloGraphQlClientTests {
         Assert.assertNotNull(rsp.get().getFindPricesByVehicleId());
         assertEquals(rsp.get().getFindPricesByVehicleId().get(0).getPrice(), 1000.0);
         assertEquals(rsp.get().getFindPricesByVehicleId().get(1).getPrice(), 700.0);
+    }
+
+    @Test
+    public void GenerateAndAssignPrice() throws IOException {
+        GraphqlClientMvc client = new GraphqlClientMvc(
+                new RestTemplateBuilder()
+                        .rootUri(url)
+                        .build(),
+                new ObjectMapper());
+
+        Optional<GenerateAndAssignPriceMutation.Data> rsp = client.exchange(new GenerateAndAssignPriceMutation("ABC", 2));
+        Assert.assertTrue(rsp.isPresent());
+        Assert.assertNotNull(rsp.get().getGenerateAndAssignPrice());
+        assertNotNull(rsp.get().getGenerateAndAssignPrice().getPrice());
+        assertEquals(rsp.get().getGenerateAndAssignPrice().getCurrency(), "ABC");
+        assertEquals(rsp.get().getGenerateAndAssignPrice().getVehicle_id(), 2);
     }
 
 
