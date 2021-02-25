@@ -1,0 +1,8 @@
+query findPricesByVehicleId($vehicle_id:Int!) {
+    findPricesByVehicleId(vehicle_id: $vehicle_id) {
+        id
+        price
+        currency
+        vehicle_id
+    }
+}

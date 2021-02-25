@@ -2,6 +2,7 @@ package com.udacity.pricingservicegraphql;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.udacity.pricingservicegraphql.client.FindAllPricesQuery;
+import com.udacity.pricingservicegraphql.client.FindPricesByVehicleIdQuery;
 import com.udacity.pricingservicegraphql.entity.Price;
 import com.udacity.pricingservicegraphql.graphqlclient.GraphqlClientMvc;
 import com.udacity.pricingservicegraphql.repository.PriceRepository;
@@ -47,7 +48,7 @@ class ApolloGraphQlClientTests {
 
 
     @Test
-    public void Mvc_LaunchList_Cursor() throws IOException {
+    public void FindAllPrices() throws IOException {
         GraphqlClientMvc client = new GraphqlClientMvc(
                 new RestTemplateBuilder()
                         .rootUri(url)
@@ -61,6 +62,21 @@ class ApolloGraphQlClientTests {
         assertEquals(rsp.get().getFindAllPrices().get(1).getPrice(), 2000.0);
         assertEquals(rsp.get().getFindAllPrices().get(2).getPrice(), 1000.0);
         assertEquals(rsp.get().getFindAllPrices().get(3).getPrice(), 700.0);
+    }
+
+    @Test
+    public void FindPricesByVehicleId() throws IOException {
+        GraphqlClientMvc client = new GraphqlClientMvc(
+                new RestTemplateBuilder()
+                        .rootUri(url)
+                        .build(),
+                new ObjectMapper());
+
+        Optional<FindPricesByVehicleIdQuery.Data> rsp = client.exchange(new FindPricesByVehicleIdQuery(3));
+        Assert.assertTrue(rsp.isPresent());
+        Assert.assertNotNull(rsp.get().getFindPricesByVehicleId());
+        assertEquals(rsp.get().getFindPricesByVehicleId().get(0).getPrice(), 1000.0);
+        assertEquals(rsp.get().getFindPricesByVehicleId().get(1).getPrice(), 700.0);
     }
 
 
