@@ -16,6 +16,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import static com.udacity.vehicles.util.Utils.createGraphqlClientMvc;
+
 /**
  * Launches a Spring Boot application for the Vehicles API,
  * initializes the car manufacturers in the database,
@@ -50,23 +52,9 @@ public class VehiclesApiApplication {
      * @param endpoint where to communicate for the pricing API
      * @return created pricing endpoint
      */
-    @Autowired
-    private LoadBalancerClient loadBalancerClient;
-
     @Bean(name="pricinggraphql")
-    @LoadBalanced
-    public GraphqlClientMvc graphqlClientMvc(@Value("${pricing.endpoint}") String endpoint, @Value("${pricing.alias}") String serviceAlias) {
-        ServiceInstance serviceInstance=loadBalancerClient.choose(serviceAlias);
-
-        System.out.println(serviceInstance.getUri());
-
-        String baseUrl=serviceInstance.getUri().toString();
-
-        return new GraphqlClientMvc(
-                new RestTemplateBuilder()
-                        .rootUri(baseUrl + endpoint)
-                        .build(),
-                new ObjectMapper());
+    public GraphqlClientMvc graphqlClientMvc(@Value("${pricing.endpoint}") String endpoint, @Value("${pricing.alias}") String serviceAlias, @Autowired LoadBalancerClient loadBalancerClient) {
+        return createGraphqlClientMvc(endpoint, serviceAlias, loadBalancerClient);
     }
 
 }

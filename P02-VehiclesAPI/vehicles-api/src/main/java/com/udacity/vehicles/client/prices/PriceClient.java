@@ -2,6 +2,7 @@ package com.udacity.vehicles.client.prices;
 
 import com.udacity.vehicles.client.graphqlclient.GraphqlClientMvc;
 import com.udacity.vehicles.client.prices.graphql.FindPricesByVehicleIdQuery;
+import com.udacity.vehicles.client.prices.graphql.GenerateAndAssignPriceMutation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -45,5 +46,12 @@ public class PriceClient {
             log.error("Unexpected error retrieving price for vehicle {}", vehicleId, e);
         }
         return "(consult price)";
+    }
+
+    public void createPrice(String currency, Integer vehicleId) throws Exception {
+        Optional<GenerateAndAssignPriceMutation.Data> rsp = graphqlClientMvc.exchange(new GenerateAndAssignPriceMutation(currency, vehicleId));
+        if (rsp.isEmpty()) {
+            throw new Exception("Couldnt assign price");
+        }
     }
 }
