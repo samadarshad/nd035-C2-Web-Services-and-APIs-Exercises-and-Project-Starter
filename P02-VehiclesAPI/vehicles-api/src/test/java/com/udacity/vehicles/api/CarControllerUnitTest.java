@@ -9,9 +9,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -76,7 +74,8 @@ public class CarControllerUnitTest {
     public void setup() {
         Car car = getCar();
         car.setId(1);
-        given(carService.save(any())).willReturn(car);
+        given(carService.create(any())).willReturn(car);
+        given(carService.update(any())).willReturn(car);
         given(carService.findById(any())).willReturn(car);
         given(carService.list()).willReturn(Collections.singletonList(car));
     }
@@ -96,8 +95,28 @@ public class CarControllerUnitTest {
                 .andExpect(status().isCreated());
 
 
-        verify(carService, times(1)).save(carArgumentCaptor.capture());
+        verify(carService, times(1)).create(carArgumentCaptor.capture());
         Car carCaptorValue = carArgumentCaptor.getValue();
+        assertThat(car, sameBeanAs(carCaptorValue));
+    }
+    /**
+     * Tests for successful update of existing car in the system
+     * @throws Exception when car update fails in the system
+     */
+    @Test
+    public void updateCar() throws Exception {
+        Car car = getCar();
+        mvc.perform(
+                put(new URI("/cars/1"))
+                        .content(json.write(car).getJson())
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isCreated());
+
+
+        verify(carService, times(1)).update(carArgumentCaptor.capture());
+        Car carCaptorValue = carArgumentCaptor.getValue();
+        car.setId(1);
         assertThat(car, sameBeanAs(carCaptorValue));
     }
     /**

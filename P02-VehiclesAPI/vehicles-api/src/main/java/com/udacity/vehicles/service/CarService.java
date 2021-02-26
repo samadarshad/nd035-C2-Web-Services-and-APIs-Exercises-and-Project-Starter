@@ -4,10 +4,14 @@ import com.udacity.vehicles.client.maps.MapsClient;
 import com.udacity.vehicles.client.prices.PriceClient;
 import com.udacity.vehicles.domain.car.Car;
 import com.udacity.vehicles.domain.car.CarRepository;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+
+import javax.swing.text.html.Option;
 
 /**
  * Implements the car service create, read, update or delete
@@ -54,23 +58,25 @@ public class CarService {
         return car;
     }
 
-    /**
-     * Either creates or updates a vehicle, based on prior existence of car
-     * @param car A car object, which can be either new or existing
-     * @return the new/updated car is stored in the repository
-     */
-    public Car save(Car car) {
-        if (car.getId() != null) {
-            return repository.findById(car.getId())
-                    .map(carToBeUpdated -> {
-                        carToBeUpdated.setDetails(car.getDetails());
-                        carToBeUpdated.setLocation(car.getLocation());
-                        return repository.save(carToBeUpdated);
-                    }).orElseThrow(CarNotFoundException::new);
-        }
+    public Car create(Car car) {
+        car.setId(null);
         repository.save(car);
         priceClient.create("USD", car.getId());
         return repository.getOne(car.getId());
+    }
+
+    public Car update(Car car) {
+        if (car.getId() != null) {
+            return repository.findById(car.getId())
+                    .map(carToBeUpdated -> {
+                        Optional.ofNullable(car.getCondition()).ifPresent(carToBeUpdated::setCondition);
+                        Optional.ofNullable(car.getDetails()).ifPresent(carToBeUpdated::setDetails);
+                        Optional.ofNullable(car.getLocation()).ifPresent(carToBeUpdated::setLocation);
+                        return repository.save(carToBeUpdated);
+                    }).orElseThrow(CarNotFoundException::new);
+        } else {
+            throw new CarNotFoundException();
+        }
     }
 
     /**

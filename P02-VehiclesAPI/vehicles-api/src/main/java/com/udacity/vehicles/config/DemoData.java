@@ -1,5 +1,6 @@
 package com.udacity.vehicles.config;
 
+import com.netflix.discovery.converters.Auto;
 import com.udacity.vehicles.domain.Condition;
 import com.udacity.vehicles.domain.Location;
 import com.udacity.vehicles.domain.car.Car;
@@ -7,12 +8,23 @@ import com.udacity.vehicles.domain.car.Details;
 import com.udacity.vehicles.domain.manufacturer.Manufacturer;
 import com.udacity.vehicles.domain.manufacturer.ManufacturerRepository;
 import com.udacity.vehicles.service.CarService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@Configuration
+@Component
 public class DemoData {
+
+    private final CarService carService;
+
+    private final ManufacturerRepository manufacturerRepository;
+
+    public DemoData(CarService carService, ManufacturerRepository manufacturerRepository) {
+        this.carService = carService;
+        this.manufacturerRepository = manufacturerRepository;
+    }
+
 
     private Car getCar(Integer number, ManufacturerRepository manufacturerRepository) {
         Car car = new Car();
@@ -34,15 +46,12 @@ public class DemoData {
         return car;
     }
 
-    @Bean
-    CommandLineRunner initCarDatabase(CarService carService, ManufacturerRepository manufacturerRepository) {
-        return args -> {
-            for (int i = 0; i < 5; i++) {
-                manufacturerRepository.save(new Manufacturer(100 + i, "Manufac" + String.valueOf(i)));
-            }
-            for (int i = 0; i < 10; i++) {
-                carService.save(getCar(i, manufacturerRepository));
-            }
-        };
+    public void initCarDatabase() {
+        for (int i = 0; i < 5; i++) {
+            manufacturerRepository.save(new Manufacturer(100 + i, "Manufac" + String.valueOf(i)));
+        }
+        for (int i = 0; i < 10; i++) {
+            carService.create(getCar(i, manufacturerRepository));
+        }
     }
 }

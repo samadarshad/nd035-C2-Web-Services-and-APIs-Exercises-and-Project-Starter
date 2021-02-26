@@ -1,5 +1,6 @@
 package com.udacity.vehicles.api;
 
+import com.udacity.vehicles.config.DemoData;
 import com.udacity.vehicles.domain.car.Car;
 import com.udacity.vehicles.service.CarService;
 import java.net.URI;
@@ -10,6 +11,7 @@ import javax.validation.Valid;
 
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,10 +35,12 @@ class CarController {
 
     private final CarService carService;
     private final CarResourceAssembler assembler;
+    private final DemoData demoData;
 
-    CarController(CarService carService, CarResourceAssembler assembler) {
+    CarController(CarService carService, CarResourceAssembler assembler, DemoData demoData) {
         this.carService = carService;
         this.assembler = assembler;
+        this.demoData = demoData;
     }
 
     /**
@@ -49,6 +53,12 @@ class CarController {
                 .collect(Collectors.toList());
         return new CollectionModel<>(resources,
                 linkTo(methodOn(CarController.class).list()).withSelfRel());
+    }
+
+    @GetMapping("/init")
+    ResponseEntity<?> initWithDemoData() {
+        demoData.initCarDatabase();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
@@ -69,7 +79,7 @@ class CarController {
      */
     @PostMapping
     ResponseEntity<?> post(@Valid @RequestBody Car car) throws URISyntaxException {
-        EntityModel<Car> resource = assembler.toResource(carService.save(car));
+        EntityModel<Car> resource = assembler.toResource(carService.create(car));
         return ResponseEntity.created(new URI(resource.getRequiredLink("self").getHref())).body(resource);
     }
 
@@ -80,10 +90,10 @@ class CarController {
      * @return response that the vehicle was updated in the system
      */
     @PutMapping("/{id}")
-    ResponseEntity<?> put(@PathVariable Integer id, @Valid @RequestBody Car car) {
+    ResponseEntity<?> put(@PathVariable Integer id, @Valid @RequestBody Car car) throws URISyntaxException {
         car.setId(id);
-        EntityModel<Car> resource = assembler.toResource(carService.save(car));
-        return ResponseEntity.ok(resource);
+        EntityModel<Car> resource = assembler.toResource(carService.update(car));
+        return ResponseEntity.created(new URI(resource.getRequiredLink("self").getHref())).body(resource);
     }
 
     /**
